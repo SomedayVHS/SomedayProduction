@@ -169,7 +169,17 @@
     animation: scroll-left 38s linear infinite;
   }
   @keyframes scroll-left{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+  .ticker-group{ display:flex; gap:48px; align-items:center; }
   .ticker span.sep{ color:var(--brass); }
+  .ticker a, .ticker button.ticker-item{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--bone-dim); text-decoration:none; background:none; border:none; padding:0; cursor:pointer;
+    transition:color .2s;
+  }
+  .ticker a:hover, .ticker a:focus-visible, .ticker button.ticker-item:hover, .ticker button.ticker-item:focus-visible{
+    color:var(--brass-bright);
+  }
+  .ticker span.static{ color:var(--bone-dim); }
 
   /* ---------- SECTION SHELL ---------- */
   section{ padding:120px 32px; position:relative; max-width:1240px; margin:0 auto; }
@@ -325,6 +335,7 @@
     <a href="#pipeline" data-i18n="nav_pipeline">Pipeline</a>
     <a href="#identite" data-i18n="nav_identite">Identité</a>
     <a href="#services" data-i18n="nav_services">Services</a>
+    <a href="https://somedayvhs.github.io/Afterglow/afterglow-2028.html" target="_blank" rel="noopener">AFTERGLOW</a>
     <a href="#contact" data-i18n="nav_contact">Contact</a>
   </nav>
   <div class="nav-tc" id="timecode" aria-hidden="true"><span class="rec"></span>00:00:00:00</div>
@@ -352,22 +363,32 @@
   </div>
 </section>
 
-<div class="ticker-wrap" aria-hidden="true">
+<div class="ticker-wrap">
   <div class="ticker" id="ticker">
-    <span>HOME.SAKE</span><span class="sep">/</span>
-    <span>AFTERGLOW</span><span class="sep">/</span>
-    <span>DUST LINE</span><span class="sep">/</span>
-    <span>TWO LANE NO NAME</span><span class="sep">/</span>
-    <span>REDLINE</span><span class="sep">/</span>
-    <span>ÉCLIPSE</span><span class="sep">/</span>
-    <span>CAPSULE NOIR</span><span class="sep">/</span>
-    <span>HOME.SAKE</span><span class="sep">/</span>
-    <span>AFTERGLOW</span><span class="sep">/</span>
-    <span>DUST LINE</span><span class="sep">/</span>
-    <span>TWO LANE NO NAME</span><span class="sep">/</span>
-    <span>REDLINE</span><span class="sep">/</span>
-    <span>ÉCLIPSE</span><span class="sep">/</span>
-    <span>CAPSULE NOIR</span><span class="sep">/</span>
+    <div class="ticker-group">
+      <a href="https://somedayvhs.github.io/MaisonEditorial/maison-editorial-final.html" target="_blank" rel="noopener">HOME.SAKE</a><span class="sep">/</span>
+      <a href="https://somedayvhs.github.io/someday-production/index.html" target="_blank" rel="noopener">SOMEDAY PRODUCTION</a><span class="sep">/</span>
+      <a href="https://somedayvhs.github.io/Afterglow/afterglow-2028.html" target="_blank" rel="noopener">AFTERGLOW</a><span class="sep">/</span>
+      <button class="ticker-item" type="button" data-video-src="dust_line.mp4" data-video-label="DUST LINE">DUST LINE</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" data-video-src="redline.mp4" data-video-label="Redline">REDLINE</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" data-video-src="someday_two_lane_final.mp4" data-video-label="Two Lane">TWO LANE</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" data-video-src="cynthia_moore.mp4" data-video-label="Cynthia Moore — Audition">CYNTHIA MOORE</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" data-video-src="archive_hk87.mp4" data-video-label="Archive HK87">ARCHIVE HK87</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" data-video-src="someday_showreel_v2.mp4" data-video-label="PUB Someday — Showreel">PUB SOMEDAY</button><span class="sep">/</span>
+      <span class="static">CAPSULE NOIR</span><span class="sep">/</span>
+    </div>
+    <div class="ticker-group" aria-hidden="true">
+      <a href="https://somedayvhs.github.io/MaisonEditorial/maison-editorial-final.html" target="_blank" rel="noopener" tabindex="-1">HOME.SAKE</a><span class="sep">/</span>
+      <a href="https://somedayvhs.github.io/someday-production/index.html" target="_blank" rel="noopener" tabindex="-1">SOMEDAY PRODUCTION</a><span class="sep">/</span>
+      <a href="https://somedayvhs.github.io/Afterglow/afterglow-2028.html" target="_blank" rel="noopener" tabindex="-1">AFTERGLOW</a><span class="sep">/</span>
+      <button class="ticker-item" type="button" tabindex="-1" data-video-src="dust_line.mp4" data-video-label="DUST LINE">DUST LINE</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" tabindex="-1" data-video-src="redline.mp4" data-video-label="Redline">REDLINE</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" tabindex="-1" data-video-src="someday_two_lane_final.mp4" data-video-label="Two Lane">TWO LANE</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" tabindex="-1" data-video-src="cynthia_moore.mp4" data-video-label="Cynthia Moore — Audition">CYNTHIA MOORE</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" tabindex="-1" data-video-src="archive_hk87.mp4" data-video-label="Archive HK87">ARCHIVE HK87</button><span class="sep">/</span>
+      <button class="ticker-item" type="button" tabindex="-1" data-video-src="someday_showreel_v2.mp4" data-video-label="PUB Someday — Showreel">PUB SOMEDAY</button><span class="sep">/</span>
+      <span class="static">CAPSULE NOIR</span><span class="sep">/</span>
+    </div>
   </div>
 </div>
 
