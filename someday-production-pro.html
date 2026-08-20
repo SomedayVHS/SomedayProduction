@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Someday Production — Studio de production 100% IA</title>
+<meta name="description" content="Someday Production — studio de production 100% intelligence artificielle. Fashion & éditorial, cinéma & fiction. Lyon, Croix-Rousse.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DejaVu+Sans:wght@400;700&family=Space+Mono:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a121d;
+    --ink-2:#0f1a28;
+    --bone:#e2e7ea;
+    --bone-dim:#8fa2ae;
+    --brass:#4f84a0;
+    --brass-bright:#7bb4cf;
+    --oxblood:#a3572a;
+    --oxblood-bright:#c97638;
+    --line: rgba(226,231,234,0.12);
+    --line-strong: rgba(226,231,234,0.24);
+    --display: 'Source Serif 4', 'DejaVu Serif', Georgia, serif;
+    --mono: 'Space Mono', 'Courier New', monospace;
+    --ratio-frame: 2.39;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--bone);
+    font-family:var(--display);
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+
+  a{color:inherit;}
+
+  /* film grain overlay */
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:200;
+    opacity:0.06; mix-blend-mode:overlay;
+  }
+
+  ::selection{ background:var(--oxblood); color:var(--bone); }
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 32px;
+    background: linear-gradient(to bottom, rgba(19,16,9,0.92), rgba(19,16,9,0));
+    backdrop-filter: blur(2px);
+  }
+  .nav-logo{
+    font-family:var(--display); font-weight:700;
+    font-size:15px; letter-spacing:0.14em; text-transform:uppercase;
+    display:flex; align-items:baseline; gap:8px;
+  }
+  .nav-logo .dot{ color:var(--brass-bright); }
+  .nav-links{ display:flex; gap:28px; font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; }
+  .nav-links a{ text-decoration:none; color:var(--bone-dim); border-bottom:1px solid transparent; padding-bottom:3px; transition:color .25s, border-color .25s; }
+  .nav-links a:hover, .nav-links a:focus-visible{ color:var(--bone); border-color:var(--brass); }
+  .nav-tc{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.05em; color:var(--brass-bright);
+    display:flex; align-items:center; gap:8px;
+  }
+  .nav-tc .rec{ width:6px; height:6px; border-radius:50%; background:var(--oxblood-bright); box-shadow:0 0 6px var(--oxblood-bright); }
+  .nav-burger{ display:none; background:none; border:1px solid var(--line-strong); color:var(--bone); width:38px; height:38px; font-family:var(--mono); cursor:pointer; }
+
+  .lang-toggle{
+    background:none; border:1px solid var(--line-strong); cursor:pointer;
+    font-family:var(--mono); font-size:11px; letter-spacing:0.06em;
+    padding:8px 12px; display:flex; align-items:center; gap:6px; color:var(--bone-dim);
+    transition:border-color .25s;
+  }
+  .lang-toggle:hover, .lang-toggle:focus-visible{ border-color:var(--brass); }
+  .lang-toggle .lang-sep{ color:var(--bone-dim); opacity:0.5; }
+  .lang-toggle .active{ color:var(--brass-bright); }
+
+  @media (max-width: 880px){
+    .nav-links{ display:none; }
+    .nav-burger{ display:block; }
+  }
+
+  /* ---------- BACK TO TOP ---------- */
+  .to-top{
+    position:fixed; right:28px; bottom:28px; z-index:150;
+    width:46px; height:46px;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--ink-2); border:1px solid var(--line-strong); color:var(--brass-bright);
+    text-decoration:none; font-family:var(--mono); font-size:16px;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .3s ease, transform .3s ease, border-color .25s, visibility .3s;
+  }
+  .to-top.visible{ opacity:1; visibility:visible; transform:none; }
+  .to-top:hover, .to-top:focus-visible{ border-color:var(--brass); color:var(--bone); }
+  @media (max-width: 780px){ .to-top{ right:18px; bottom:18px; width:42px; height:42px; } }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding: 120px 32px 80px;
+  }
+  .letterbox{
+    position:absolute; left:0; right:0; height:9vh; background:#000; z-index:2;
+  }
+  .letterbox.top{ top:0; }
+  .letterbox.bottom{ bottom:0; }
+  .hero-frame{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 60% 50% at 30% 20%, rgba(79,132,160,0.14), transparent 60%),
+      radial-gradient(ellipse 70% 60% at 80% 80%, rgba(163,87,42,0.16), transparent 60%);
+  }
+  .corner{
+    position:absolute; width:26px; height:26px; border-color:var(--brass); opacity:0.7;
+  }
+  .corner.tl{ top:11vh; left:32px; border-top:2px solid; border-left:2px solid; }
+  .corner.tr{ top:11vh; right:32px; border-top:2px solid; border-right:2px solid; }
+  .corner.bl{ bottom:11vh; left:32px; border-bottom:2px solid; border-left:2px solid; }
+  .corner.br{ bottom:11vh; right:32px; border-bottom:2px solid; border-right:2px solid; }
+
+  .hero-eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--brass-bright); margin:0 0 22px; position:relative; z-index:3;
+  }
+  .hero h1{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(38px, 6.4vw, 92px);
+    line-height:1.02; letter-spacing:-0.01em;
+    margin:0 0 26px; max-width:15ch; position:relative; z-index:3;
+  }
+  .hero h1 em{ font-style:italic; color:var(--brass-bright); }
+  .hero-sub{
+    font-size:clamp(15px,1.6vw,18px); color:var(--bone-dim); max-width:52ch;
+    margin:0 0 40px; position:relative; z-index:3;
+  }
+  .hero-cta{ display:flex; gap:16px; flex-wrap:wrap; position:relative; z-index:3; }
+  .btn{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    padding:15px 26px; text-decoration:none; display:inline-block;
+    border:1px solid var(--line-strong); transition:all .25s;
+  }
+  .btn-primary{ background:var(--oxblood); border-color:var(--oxblood); color:var(--bone); }
+  .btn-primary:hover, .btn-primary:focus-visible{ background:var(--oxblood-bright); border-color:var(--oxblood-bright); }
+  .btn-ghost{ color:var(--bone); }
+  .btn-ghost:hover, .btn-ghost:focus-visible{ border-color:var(--brass); color:var(--brass-bright); }
+
+  /* ---------- TICKER ---------- */
+  .ticker-wrap{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    overflow:hidden; padding:16px 0; background:var(--ink-2);
+  }
+  .ticker{
+    display:flex; gap:48px; white-space:nowrap; width:max-content;
+    font-family:var(--mono); font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--bone-dim);
+    animation: scroll-left 38s linear infinite;
+  }
+  @keyframes scroll-left{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+  .ticker span.sep{ color:var(--brass); }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{ padding:120px 32px; position:relative; max-width:1240px; margin:0 auto; }
+  .section-head{ margin-bottom:56px; max-width:70ch; }
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--brass-bright); margin:0 0 14px;
+  }
+  h2{
+    font-family:var(--display); font-weight:700; font-size:clamp(28px,3.4vw,44px);
+    margin:0 0 18px; letter-spacing:-0.01em;
+  }
+  .lede{ color:var(--bone-dim); font-size:17px; max-width:60ch; margin:0; }
+
+  /* ---------- POLES ---------- */
+  .poles{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); }
+  .pole{
+    background:var(--ink); padding:48px 40px; position:relative;
+  }
+  .pole::before{
+    content:""; position:absolute; top:22px; left:40px; right:40px; bottom:22px;
+    border:1px solid var(--line); pointer-events:none;
+  }
+  .pole-num{ font-family:var(--mono); font-size:11px; color:var(--brass); letter-spacing:0.1em; }
+  .pole h3{
+    font-family:var(--display); font-weight:700; font-size:26px; margin:16px 0 14px;
+  }
+  .pole p{ color:var(--bone-dim); font-size:15px; margin:0 0 24px; }
+  .tag-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .tag{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.04em;
+    padding:6px 10px; border:1px solid var(--line-strong); color:var(--bone-dim);
+  }
+  .tag-link{ text-decoration:none; transition:color .25s, border-color .25s; }
+  .tag-link:hover, .tag-link:focus-visible{ color:var(--brass-bright); border-color:var(--brass); }
+  @media (max-width: 780px){ .poles{ grid-template-columns:1fr; } }
+
+  /* ---------- PIPELINE ---------- */
+  .pipeline{ display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+  .stage{ border-top:2px solid var(--brass); padding-top:20px; }
+  .stage-tc{ font-family:var(--mono); font-size:11px; color:var(--brass-bright); letter-spacing:0.08em; }
+  .stage h4{ font-family:var(--display); font-weight:700; font-size:20px; margin:10px 0 12px; }
+  .stage ul{ list-style:none; margin:0; padding:0; color:var(--bone-dim); font-size:14px; }
+  .stage li{ padding:6px 0; border-bottom:1px dashed var(--line); }
+  .stage li:last-child{ border-bottom:none; }
+  @media (max-width: 780px){ .pipeline{ grid-template-columns:1fr; gap:40px; } }
+
+  /* ---------- QUOTE / IDENTITY ---------- */
+  .quote-band{
+    background:var(--ink-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:100px 32px; text-align:center; position:relative; overflow:hidden;
+  }
+  .quote-band .frame-mark{
+    font-family:var(--mono); font-size:11px; color:var(--brass); letter-spacing:0.2em;
+    display:block; margin-bottom:28px;
+  }
+  .quote-band blockquote{
+    font-family:var(--display); font-style:italic; font-weight:600;
+    font-size:clamp(24px,3.6vw,42px); max-width:22ch; margin:0 auto; line-height:1.25;
+  }
+  .quote-band .attribution{
+    font-family:var(--mono); font-size:12px; color:var(--bone-dim); margin-top:24px; letter-spacing:0.08em;
+  }
+
+  /* ---------- SERVICES ---------- */
+  .services{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+  .service{ background:var(--ink); padding:36px 30px; display:flex; flex-direction:column; }
+  .service h4{ font-family:var(--display); font-weight:700; font-size:20px; margin:0 0 12px; }
+  .service p{ color:var(--bone-dim); font-size:14px; margin:0 0 20px; flex-grow:1; }
+  .service a{ font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass-bright); text-decoration:none; }
+  .service a:hover, .service a:focus-visible{ color:var(--bone); }
+  @media (max-width: 880px){ .services{ grid-template-columns:1fr; } }
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  .contact{
+    display:grid; grid-template-columns:1.2fr 1fr; gap:60px; align-items:end;
+  }
+  .contact h2{ margin-bottom:22px; }
+  .contact-email{
+    font-family:var(--display); font-weight:700; font-size:clamp(22px,3vw,34px);
+    color:var(--brass-bright); text-decoration:none; word-break:break-word;
+  }
+  .contact-email:hover, .contact-email:focus-visible{ color:var(--bone); }
+  .contact-meta{ font-family:var(--mono); font-size:13px; color:var(--bone-dim); line-height:2; }
+  @media (max-width: 780px){ .contact{ grid-template-columns:1fr; gap:32px; } }
+
+  footer{
+    border-top:1px solid var(--line); padding:28px 32px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    font-family:var(--mono); font-size:11px; color:var(--bone-dim); letter-spacing:0.05em;
+  }
+
+  .fade-in{ opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease; }
+  .fade-in.visible{ opacity:1; transform:none; }
+
+  :focus-visible{ outline:2px solid var(--brass-bright); outline-offset:3px; }
+</style>
+</head>
+<body>
+
+<svg class="grain" aria-hidden="true">
+  <filter id="noiseFilter">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+    <feColorMatrix type="saturate" values="0"></feColorMatrix>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+</svg>
+
+<header class="nav">
+  <div class="nav-logo">SOMEDAY<span class="dot">·</span>PRODUCTION</div>
+  <nav class="nav-links" aria-label="Navigation principale">
+    <a href="#poles" data-i18n="nav_poles">Pôles</a>
+    <a href="#pipeline" data-i18n="nav_pipeline">Pipeline</a>
+    <a href="#identite" data-i18n="nav_identite">Identité</a>
+    <a href="#services" data-i18n="nav_services">Services</a>
+    <a href="#contact" data-i18n="nav_contact">Contact</a>
+  </nav>
+  <div class="nav-tc" id="timecode" aria-hidden="true"><span class="rec"></span>00:00:00:00</div>
+  <button class="lang-toggle" id="langToggle" aria-label="Changer de langue / Switch language">
+    <span class="lang-fr active">FR</span><span class="lang-sep">/</span><span class="lang-en">EN</span>
+  </button>
+  <button class="nav-burger" aria-label="Ouvrir le menu">≡</button>
+</header>
+
+<section class="hero" id="top">
+  <div class="letterbox top"></div>
+  <div class="letterbox bottom"></div>
+  <div class="hero-frame" aria-hidden="true"></div>
+  <span class="corner tl" aria-hidden="true"></span>
+  <span class="corner tr" aria-hidden="true"></span>
+  <span class="corner bl" aria-hidden="true"></span>
+  <span class="corner br" aria-hidden="true"></span>
+
+  <p class="hero-eyebrow" data-i18n="hero_eyebrow">Studio de production — Lyon, Croix-Rousse</p>
+  <h1 data-i18n-html="hero_h1">L'image de marque et de fiction, <em>entièrement générée</em>, entièrement dirigée.</h1>
+  <p class="hero-sub" data-i18n="hero_sub">Someday Production conçoit et réalise des films et des séries éditoriales à l'aide de l'intelligence artificielle — de l'écriture au montage final — avec une exigence de mise en scène identique à celle d'un plateau réel.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#contact" data-i18n="cta_devis">Demander un devis</a>
+    <a class="btn btn-ghost" href="#poles" data-i18n="cta_travail">Voir le travail</a>
+  </div>
+</section>
+
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker" id="ticker">
+    <span>HOME.SAKE</span><span class="sep">/</span>
+    <span>AFTERGLOW</span><span class="sep">/</span>
+    <span>DUST LINE</span><span class="sep">/</span>
+    <span>TWO LANE NO NAME</span><span class="sep">/</span>
+    <span>REDLINE</span><span class="sep">/</span>
+    <span>ÉCLIPSE</span><span class="sep">/</span>
+    <span>CAPSULE NOIR</span><span class="sep">/</span>
+    <span>HOME.SAKE</span><span class="sep">/</span>
+    <span>AFTERGLOW</span><span class="sep">/</span>
+    <span>DUST LINE</span><span class="sep">/</span>
+    <span>TWO LANE NO NAME</span><span class="sep">/</span>
+    <span>REDLINE</span><span class="sep">/</span>
+    <span>ÉCLIPSE</span><span class="sep">/</span>
+    <span>CAPSULE NOIR</span><span class="sep">/</span>
+  </div>
+</div>
+
+<section id="poles" class="fade-in">
+  <div class="section-head">
+    <p class="eyebrow" data-i18n="poles_eyebrow">Ce que nous produisons</p>
+    <h2 data-i18n="poles_title">Deux pôles, une même grammaire visuelle</h2>
+    <p class="lede" data-i18n="poles_lede">Un studio unique, deux terrains d'expression — reliés par une identité constante : grain Kodak Vision3, format cinémascope 2.39:1, et le refus du lisse.</p>
+  </div>
+  <div class="poles">
+    <div class="pole">
+      <p class="pole-num">PÔLE 01</p>
+      <h3 data-i18n="pole1_title">Fashion &amp; Éditorial</h3>
+      <p data-i18n="pole1_desc">Séries mode et campagnes éditoriales pensées comme des objets de studio — lumière documentaire, direction Corinne Day / Nan Goldin, capsules pensées pour l'image de marque.</p>
+      <div class="tag-row">
+        <a class="tag tag-link" href="https://somedayvhs.github.io/homesake/" target="_blank" rel="noopener">Home.Sake</a>
+        <a class="tag tag-link" href="https://somedayvhs.github.io/someday-production/index.html" target="_blank" rel="noopener">Someday Production</a>
+      </div>
+    </div>
+    <div class="pole">
+      <p class="pole-num">PÔLE 02</p>
+      <h3 data-i18n="pole2_title">Cinéma &amp; Fiction</h3>
+      <p data-i18n="pole2_desc">Courts-métrages et pilotes de série — écriture, mise en scène, voix, montage. Grammaire Malick / Vision3, format large, narration par suggestion plutôt que par frontalité.</p>
+      <div class="tag-row">
+        <span class="tag">DUST LINE</span>
+        <span class="tag">Two Lane No Name</span>
+        <span class="tag">Redline</span>
+        <span class="tag">PUB Someday</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline" class="fade-in">
+  <div class="section-head">
+    <p class="eyebrow" data-i18n="pipe_eyebrow">Comment nous travaillons</p>
+    <h2 data-i18n="pipe_title">Un pipeline de production, pas un générateur d'images</h2>
+    <p class="lede" data-i18n="pipe_lede">Chaque projet suit un processus de fabrication complet, de la pré-production au mix final — piloté et corrigé à chaque étape, jamais laissé au hasard du prompt.</p>
+  </div>
+  <div class="pipeline">
+    <div class="stage">
+      <p class="stage-tc" data-i18n="stage1_tc">01 — PRÉ-PRODUCTION</p>
+      <h4 data-i18n="stage1_title">Écriture &amp; direction artistique</h4>
+      <ul>
+        <li data-i18n="stage1_li1">Scénario, découpage, character design</li>
+        <li data-i18n="stage1_li2">Palette, typographie, references visuelles</li>
+        <li data-i18n="stage1_li3">Consistance des personnages (console dédiée)</li>
+      </ul>
+    </div>
+    <div class="stage">
+      <p class="stage-tc" data-i18n="stage2_tc">02 — PRODUCTION</p>
+      <h4 data-i18n="stage2_title">Génération &amp; mise en scène</h4>
+      <ul>
+        <li data-i18n="stage2_li1">Plans fixes — GPT Image 2</li>
+        <li data-i18n="stage2_li2">Animation &amp; mouvement caméra — Kling AI, Seedance</li>
+        <li data-i18n="stage2_li3">Voix, doublage, musique — ElevenLabs</li>
+      </ul>
+    </div>
+    <div class="stage">
+      <p class="stage-tc" data-i18n="stage3_tc">03 — POST-PRODUCTION</p>
+      <h4 data-i18n="stage3_title">Montage &amp; finition</h4>
+      <ul>
+        <li data-i18n="stage3_li1">Montage, raccords, étalonnage — ffmpeg / Python</li>
+        <li data-i18n="stage3_li2">Mix audio normalisé (−14 LUFS)</li>
+        <li data-i18n="stage3_li3">Grain, générique, livraison</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="quote-band" id="identite">
+  <span class="frame-mark">24P — 2.39:1 — VISION3</span>
+  <blockquote>« L'imperfection analogique est intentionnelle. »</blockquote>
+  <p class="attribution" data-i18n="quote_attr">— Charte visuelle Someday Production</p>
+</div>
+
+<section id="services" class="fade-in">
+  <div class="section-head">
+    <p class="eyebrow" data-i18n="serv_eyebrow">Ce que nous proposons</p>
+    <h2 data-i18n="serv_title">Trois formats, un devis sur-mesure</h2>
+    <p class="lede" data-i18n="serv_lede">Chaque projet est cadré individuellement selon l'ambition, le format et le délai. Pas de tarif standard — un accompagnement de bout en bout.</p>
+  </div>
+  <div class="services">
+    <div class="service">
+      <h4 data-i18n="serv1_title">Capsule éditoriale</h4>
+      <p data-i18n="serv1_desc">Série de visuels mode ou lifestyle pour une collection, une campagne ou un lancement — cohérente, déclinable, prête pour le web et le print.</p>
+      <a href="#contact" data-i18n="serv_cta">Demander un devis →</a>
+    </div>
+    <div class="service">
+      <h4 data-i18n="serv2_title">Court-métrage / Pilote</h4>
+      <p data-i18n="serv2_desc">Film narratif complet, de l'écriture au mix final — pour une marque, un concours ou un développement de série.</p>
+      <a href="#contact" data-i18n="serv_cta">Demander un devis →</a>
+    </div>
+    <div class="service">
+      <h4 data-i18n="serv3_title">Contenu de marque</h4>
+      <p data-i18n="serv3_desc">Formats courts pensés pour les réseaux — teasers, making-of, capsules verticales — dans l'identité visuelle du studio ou celle du client.</p>
+      <a href="#contact" data-i18n="serv_cta">Demander un devis →</a>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="fade-in">
+  <div class="contact">
+    <div>
+      <p class="eyebrow" data-i18n="contact_eyebrow">Contact</p>
+      <h2 data-i18n="contact_title">Un projet, une idée, une image à fabriquer.</h2>
+      <a class="contact-email" href="mailto:somedayvhs@outlook.fr">somedayvhs@outlook.fr</a>
+    </div>
+    <div class="contact-meta">
+      SOMEDAY PRODUCTION<br>
+      Lyon, Croix-Rousse — France<br>
+      <span data-i18n="contact_studio">Studio de production 100% IA</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© <span id="year"></span> Someday Production</span>
+  <span data-i18n="footer_tag">L'imperfection analogique est intentionnelle.</span>
+</footer>
+
+<a href="#top" class="to-top" id="toTop" aria-label="Remonter en haut de page">↑</a>
+
+<script>
+  // Timecode readout tied to scroll position (signature element)
+  (function(){
+    var tc = document.getElementById('timecode');
+    function fmt(n){ return String(n).padStart(2,'0'); }
+    function update(){
+      var scrolled = window.scrollY || 0;
+      var totalFrames = Math.floor(scrolled / 4);
+      var frames = totalFrames % 24;
+      var totalSeconds = Math.floor(totalFrames / 24);
+      var seconds = totalSeconds % 60;
+      var minutes = Math.floor(totalSeconds / 60) % 60;
+      var hours = Math.floor(totalSeconds / 3600);
+      tc.innerHTML = '<span class="rec"></span>' + fmt(hours) + ':' + fmt(minutes) + ':' + fmt(seconds) + ':' + fmt(frames);
+    }
+    document.addEventListener('scroll', update, { passive:true });
+    update();
+  })();
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ---- FR/EN translation ----
+  var translations = {
+    nav_poles: { fr:'Pôles', en:'Focus' },
+    nav_pipeline: { fr:'Pipeline', en:'Pipeline' },
+    nav_identite: { fr:'Identité', en:'Identity' },
+    nav_services: { fr:'Services', en:'Services' },
+    nav_contact: { fr:'Contact', en:'Contact' },
+    hero_eyebrow: { fr:'Studio de production — Lyon, Croix-Rousse', en:'Production studio — Lyon, Croix-Rousse' },
+    hero_h1: { fr:"L'image de marque et de fiction, <em>entièrement générée</em>, entièrement dirigée.", en:'Brand and fiction imagery, <em>entirely generated</em>, entirely directed.' },
+    hero_sub: { fr:"Someday Production conçoit et réalise des films et des séries éditoriales à l'aide de l'intelligence artificielle — de l'écriture au montage final — avec une exigence de mise en scène identique à celle d'un plateau réel.", en:'Someday Production writes and directs films and editorial series using artificial intelligence — from script to final cut — with the same directorial rigor as a real set.' },
+    cta_devis: { fr:'Demander un devis', en:'Request a quote' },
+    cta_travail: { fr:'Voir le travail', en:'See the work' },
+    poles_eyebrow: { fr:'Ce que nous produisons', en:'What we produce' },
+    poles_title: { fr:'Deux pôles, une même grammaire visuelle', en:'Two disciplines, one visual grammar' },
+    poles_lede: { fr:"Un studio unique, deux terrains d'expression — reliés par une identité constante : grain Kodak Vision3, format cinémascope 2.39:1, et le refus du lisse.", en:'One studio, two fields of expression — bound by a constant identity: Kodak Vision3 grain, 2.39:1 cinemascope, and a refusal of the polished look.' },
+    pole1_title: { fr:'Fashion & Éditorial', en:'Fashion & Editorial' },
+    pole1_desc: { fr:"Séries mode et campagnes éditoriales pensées comme des objets de studio — lumière documentaire, direction Corinne Day / Nan Goldin, capsules pensées pour l'image de marque.", en:'Fashion series and editorial campaigns conceived as studio objects — documentary light, Corinne Day / Nan Goldin direction, capsules built for brand imagery.' },
+    pole2_title: { fr:'Cinéma & Fiction', en:'Film & Fiction' },
+    pole2_desc: { fr:'Courts-métrages et pilotes de série — écriture, mise en scène, voix, montage. Grammaire Malick / Vision3, format large, narration par suggestion plutôt que par frontalité.', en:'Short films and series pilots — writing, direction, voice, editing. Malick / Vision3 grammar, widescreen format, storytelling through suggestion rather than exposition.' },
+    pipe_eyebrow: { fr:'Comment nous travaillons', en:'How we work' },
+    pipe_title: { fr:"Un pipeline de production, pas un générateur d'images", en:'A production pipeline, not an image generator' },
+    pipe_lede: { fr:'Chaque projet suit un processus de fabrication complet, de la pré-production au mix final — piloté et corrigé à chaque étape, jamais laissé au hasard du prompt.', en:'Every project follows a complete production process, from pre-production to final mix — directed and corrected at every stage, never left to prompt chance.' },
+    stage1_tc: { fr:'01 — PRÉ-PRODUCTION', en:'01 — PRE-PRODUCTION' },
+    stage1_title: { fr:'Écriture & direction artistique', en:'Writing & art direction' },
+    stage1_li1: { fr:'Scénario, découpage, character design', en:'Script, shot breakdown, character design' },
+    stage1_li2: { fr:'Palette, typographie, references visuelles', en:'Palette, typography, visual references' },
+    stage1_li3: { fr:'Consistance des personnages (console dédiée)', en:'Character consistency (dedicated console)' },
+    stage2_tc: { fr:'02 — PRODUCTION', en:'02 — PRODUCTION' },
+    stage2_title: { fr:'Génération & mise en scène', en:'Generation & direction' },
+    stage2_li1: { fr:'Plans fixes — GPT Image 2', en:'Still frames — GPT Image 2' },
+    stage2_li2: { fr:'Animation & mouvement caméra — Kling AI, Seedance', en:'Animation & camera movement — Kling AI, Seedance' },
+    stage2_li3: { fr:'Voix, doublage, musique — ElevenLabs', en:'Voice, dubbing, music — ElevenLabs' },
+    stage3_tc: { fr:'03 — POST-PRODUCTION', en:'03 — POST-PRODUCTION' },
+    stage3_title: { fr:'Montage & finition', en:'Editing & finishing' },
+    stage3_li1: { fr:'Montage, raccords, étalonnage — ffmpeg / Python', en:'Editing, continuity, color — ffmpeg / Python' },
+    stage3_li2: { fr:'Mix audio normalisé (−14 LUFS)', en:'Normalized audio mix (−14 LUFS)' },
+    stage3_li3: { fr:'Grain, générique, livraison', en:'Grain, credits, delivery' },
+    quote_attr: { fr:'— Charte visuelle Someday Production', en:'— Someday Production visual charter' },
+    serv_eyebrow: { fr:'Ce que nous proposons', en:'What we offer' },
+    serv_title: { fr:'Trois formats, un devis sur-mesure', en:'Three formats, one tailored quote' },
+    serv_lede: { fr:"Chaque projet est cadré individuellement selon l'ambition, le format et le délai. Pas de tarif standard — un accompagnement de bout en bout.", en:'Every project is scoped individually based on ambition, format and timeline. No standard rate — end-to-end support.' },
+    serv1_title: { fr:'Capsule éditoriale', en:'Editorial capsule' },
+    serv1_desc: { fr:'Série de visuels mode ou lifestyle pour une collection, une campagne ou un lancement — cohérente, déclinable, prête pour le web et le print.', en:'A series of fashion or lifestyle visuals for a collection, campaign or launch — cohesive, adaptable, ready for web and print.' },
+    serv2_title: { fr:'Court-métrage / Pilote', en:'Short film / Pilot' },
+    serv2_desc: { fr:"Film narratif complet, de l'écriture au mix final — pour une marque, un concours ou un développement de série.", en:'A complete narrative film, from writing to final mix — for a brand, a competition or a series in development.' },
+    serv3_title: { fr:'Contenu de marque', en:'Branded content' },
+    serv3_desc: { fr:'Formats courts pensés pour les réseaux — teasers, making-of, capsules verticales — dans l\'identité visuelle du studio ou celle du client.', en:"Short-form content built for social — teasers, making-ofs, vertical capsules — in the studio's visual identity or the client's own." },
+    serv_cta: { fr:'Demander un devis →', en:'Request a quote →' },
+    contact_eyebrow: { fr:'Contact', en:'Contact' },
+    contact_title: { fr:'Un projet, une idée, une image à fabriquer.', en:'A project, an idea, an image to make.' },
+    contact_studio: { fr:'Studio de production 100% IA', en:'100% AI production studio' },
+    footer_tag: { fr:"L'imperfection analogique est intentionnelle.", en:'The analog imperfection is intentional.' }
+  };
+
+  var currentLang = 'fr';
+  function applyLang(lang){
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(translations[key]){ el.textContent = translations[key][lang]; }
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-html');
+      if(translations[key]){ el.innerHTML = translations[key][lang]; }
+    });
+    var frLabel = document.querySelector('.lang-fr');
+    var enLabel = document.querySelector('.lang-en');
+    if(frLabel && enLabel){
+      frLabel.classList.toggle('active', lang === 'fr');
+      enLabel.classList.toggle('active', lang === 'en');
+    }
+  }
+  var langBtn = document.getElementById('langToggle');
+  if(langBtn){
+    langBtn.addEventListener('click', function(){
+      applyLang(currentLang === 'fr' ? 'en' : 'fr');
+    });
+  }
+
+  // ---- Back to top ----
+  var toTop = document.getElementById('toTop');
+  function toggleToTop(){
+    if(window.scrollY > 600){ toTop.classList.add('visible'); }
+    else{ toTop.classList.remove('visible'); }
+  }
+  document.addEventListener('scroll', toggleToTop, { passive:true });
+  toggleToTop();
+
+  // Fade-in on scroll
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(function(el){ io.observe(el); });
+
+  // Mobile nav (simple toggle -> scroll to links list as fallback)
+  var burger = document.querySelector('.nav-burger');
+  var links = document.querySelector('.nav-links');
+  if(burger){
+    burger.addEventListener('click', function(){
+      var open = links.style.display === 'flex';
+      links.style.display = open ? 'none' : 'flex';
+      links.style.position = 'fixed';
+      links.style.top = '64px';
+      links.style.right = '24px';
+      links.style.background = 'var(--ink-2)';
+      links.style.border = '1px solid var(--line)';
+      links.style.padding = '18px';
+      links.style.flexDirection = 'column';
+      links.style.gap = '16px';
+    });
+  }
+</script>
+
+</body>
+</html>
