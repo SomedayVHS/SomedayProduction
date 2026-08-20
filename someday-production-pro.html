@@ -205,6 +205,46 @@
   }
   .tag-link{ text-decoration:none; transition:color .25s, border-color .25s; }
   .tag-link:hover, .tag-link:focus-visible{ color:var(--brass-bright); border-color:var(--brass); }
+  button.tag{ font-family:var(--mono); background:none; cursor:pointer; }
+
+  /* ---------- VIDEO MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:300;
+    background:rgba(6,10,16,0.88);
+    display:flex; align-items:center; justify-content:center;
+    padding:40px 20px;
+    opacity:0; visibility:hidden;
+    transition:opacity .3s ease, visibility .3s;
+  }
+  .modal-overlay.open{ opacity:1; visibility:visible; }
+  .modal-box{
+    position:relative; width:100%; max-width:960px;
+    border:1px solid var(--line-strong); background:var(--ink-2);
+    transform:translateY(16px) scale(0.98);
+    transition:transform .3s ease;
+  }
+  .modal-overlay.open .modal-box{ transform:none; }
+  .modal-box::before{
+    content:""; position:absolute; top:10px; left:10px; right:10px; bottom:10px;
+    border:1px solid var(--line); pointer-events:none; z-index:2;
+  }
+  .modal-label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--brass-bright); padding:16px 20px 0;
+  }
+  .modal-box video{ display:block; width:100%; max-height:78vh; background:#000; }
+  .modal-close{
+    position:absolute; top:-18px; right:-18px; z-index:3;
+    width:38px; height:38px; border-radius:50%;
+    background:var(--ink); border:1px solid var(--line-strong); color:var(--bone);
+    font-family:var(--mono); font-size:16px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:border-color .25s, color .25s;
+  }
+  .modal-close:hover, .modal-close:focus-visible{ border-color:var(--brass); color:var(--brass-bright); }
+  @media (max-width: 600px){
+    .modal-close{ top:-14px; right:0; }
+  }
   @media (max-width: 780px){ .poles{ grid-template-columns:1fr; } }
 
   /* ---------- PIPELINE ---------- */
@@ -355,7 +395,7 @@
         <span class="tag">DUST LINE</span>
         <span class="tag">Two Lane No Name</span>
         <span class="tag">Redline</span>
-        <span class="tag">PUB Someday</span>
+        <button class="tag tag-link" type="button" id="pubSomedayTrigger">PUB Someday</button>
       </div>
     </div>
   </div>
@@ -451,6 +491,16 @@
 
 <a href="#top" class="to-top" id="toTop" aria-label="Remonter en haut de page">↑</a>
 
+<div class="modal-overlay" id="videoModal" role="dialog" aria-modal="true" aria-label="Lecteur vidéo — PUB Someday">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="Fermer la vidéo">✕</button>
+    <p class="modal-label" data-i18n="modal_label">PUB Someday — Showreel</p>
+    <video id="modalVideo" controls playsinline preload="none">
+      <source src="someday_showreel_v2.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
 <script>
   // Timecode readout tied to scroll position (signature element)
   (function(){
@@ -523,7 +573,8 @@
     contact_eyebrow: { fr:'Contact', en:'Contact' },
     contact_title: { fr:'Un projet, une idée, une image à fabriquer.', en:'A project, an idea, an image to make.' },
     contact_studio: { fr:'Studio de production 100% IA', en:'100% AI production studio' },
-    footer_tag: { fr:"L'imperfection analogique est intentionnelle.", en:'The analog imperfection is intentional.' }
+    footer_tag: { fr:"L'imperfection analogique est intentionnelle.", en:'The analog imperfection is intentional.' },
+    modal_label: { fr:'PUB Someday — Showreel', en:'PUB Someday — Showreel' }
   };
 
   var currentLang = 'fr';
@@ -560,6 +611,34 @@
   }
   document.addEventListener('scroll', toggleToTop, { passive:true });
   toggleToTop();
+
+  // ---- Video modal (PUB Someday) ----
+  var videoModal = document.getElementById('videoModal');
+  var modalVideo = document.getElementById('modalVideo');
+  var pubTrigger = document.getElementById('pubSomedayTrigger');
+  var modalClose = document.getElementById('modalClose');
+
+  function openModal(){
+    videoModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    modalVideo.load();
+    modalVideo.play().catch(function(){});
+    modalClose.focus();
+  }
+  function closeModal(){
+    videoModal.classList.remove('open');
+    document.body.style.overflow = '';
+    modalVideo.pause();
+    pubTrigger.focus();
+  }
+  if(pubTrigger){ pubTrigger.addEventListener('click', openModal); }
+  if(modalClose){ modalClose.addEventListener('click', closeModal); }
+  videoModal.addEventListener('click', function(e){
+    if(e.target === videoModal){ closeModal(); }
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && videoModal.classList.contains('open')){ closeModal(); }
+  });
 
   // Fade-in on scroll
   var io = new IntersectionObserver(function(entries){
