@@ -70,6 +70,12 @@
   .nav-links{ display:flex; gap:28px; font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; }
   .nav-links a{ text-decoration:none; color:var(--bone-dim); border-bottom:1px solid transparent; padding-bottom:3px; transition:color .25s, border-color .25s; }
   .nav-links a:hover, .nav-links a:focus-visible{ color:var(--bone); border-color:var(--brass); }
+  .nav-video-link{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    background:none; border:none; padding:0 0 3px; margin:0; cursor:pointer;
+    color:var(--bone-dim); border-bottom:1px solid transparent; transition:color .25s, border-color .25s;
+  }
+  .nav-video-link:hover, .nav-video-link:focus-visible{ color:var(--bone); border-color:var(--brass); }
   .nav-tc{
     font-family:var(--mono); font-size:11px; letter-spacing:0.05em; color:var(--brass-bright);
     display:flex; align-items:center; gap:8px;
@@ -335,7 +341,7 @@
     <a href="#pipeline" data-i18n="nav_pipeline">Pipeline</a>
     <a href="#identite" data-i18n="nav_identite">Identité</a>
     <a href="#services" data-i18n="nav_services">Services</a>
-    <a href="https://somedayvhs.github.io/Afterglow/afterglow-2028.html" target="_blank" rel="noopener">AFTERGLOW</a>
+    <button class="tag-link nav-video-link" type="button" data-video-src="afterglow.mp4" data-video-label="AFTERGLOW">AFTERGLOW</button>
     <a href="#contact" data-i18n="nav_contact">Contact</a>
   </nav>
   <div class="nav-tc" id="timecode" aria-hidden="true"><span class="rec"></span>00:00:00:00</div>
@@ -368,7 +374,7 @@
     <div class="ticker-group">
       <a href="https://somedayvhs.github.io/MaisonEditorial/maison-editorial-final.html" target="_blank" rel="noopener">HOME.SAKE</a><span class="sep">/</span>
       <a href="https://somedayvhs.github.io/someday-production/index.html" target="_blank" rel="noopener">SOMEDAY PRODUCTION</a><span class="sep">/</span>
-      <a href="https://somedayvhs.github.io/Afterglow/afterglow-2028.html" target="_blank" rel="noopener">AFTERGLOW</a><span class="sep">/</span>
+      <button class="ticker-item" type="button" data-video-src="afterglow.mp4" data-video-label="AFTERGLOW">AFTERGLOW</button><span class="sep">/</span>
       <button class="ticker-item" type="button" data-video-src="dust_line.mp4" data-video-label="DUST LINE">DUST LINE</button><span class="sep">/</span>
       <button class="ticker-item" type="button" data-video-src="redline.mp4" data-video-label="Redline">REDLINE</button><span class="sep">/</span>
       <button class="ticker-item" type="button" data-video-src="someday_two_lane_final.mp4" data-video-label="Two Lane">TWO LANE</button><span class="sep">/</span>
@@ -380,7 +386,7 @@
     <div class="ticker-group" aria-hidden="true">
       <a href="https://somedayvhs.github.io/MaisonEditorial/maison-editorial-final.html" target="_blank" rel="noopener" tabindex="-1">HOME.SAKE</a><span class="sep">/</span>
       <a href="https://somedayvhs.github.io/someday-production/index.html" target="_blank" rel="noopener" tabindex="-1">SOMEDAY PRODUCTION</a><span class="sep">/</span>
-      <a href="https://somedayvhs.github.io/Afterglow/afterglow-2028.html" target="_blank" rel="noopener" tabindex="-1">AFTERGLOW</a><span class="sep">/</span>
+      <button class="ticker-item" type="button" tabindex="-1" data-video-src="afterglow.mp4" data-video-label="AFTERGLOW">AFTERGLOW</button><span class="sep">/</span>
       <button class="ticker-item" type="button" tabindex="-1" data-video-src="dust_line.mp4" data-video-label="DUST LINE">DUST LINE</button><span class="sep">/</span>
       <button class="ticker-item" type="button" tabindex="-1" data-video-src="redline.mp4" data-video-label="Redline">REDLINE</button><span class="sep">/</span>
       <button class="ticker-item" type="button" tabindex="-1" data-video-src="someday_two_lane_final.mp4" data-video-label="Two Lane">TWO LANE</button><span class="sep">/</span>
