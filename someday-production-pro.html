@@ -395,7 +395,8 @@
         <span class="tag">DUST LINE</span>
         <span class="tag">Two Lane No Name</span>
         <span class="tag">Redline</span>
-        <button class="tag tag-link" type="button" id="pubSomedayTrigger">PUB Someday</button>
+        <button class="tag tag-link" type="button" data-video-src="someday_two_lane_final.mp4" data-video-label="Two Lane">Two Lane</button>
+        <button class="tag tag-link" type="button" data-video-src="someday_showreel_v2.mp4" data-video-label="PUB Someday — Showreel">PUB Someday</button>
       </div>
     </div>
   </div>
@@ -494,7 +495,7 @@
 <div class="modal-overlay" id="videoModal" role="dialog" aria-modal="true" aria-label="Lecteur vidéo — PUB Someday">
   <div class="modal-box">
     <button class="modal-close" id="modalClose" aria-label="Fermer la vidéo">✕</button>
-    <p class="modal-label" data-i18n="modal_label">PUB Someday — Showreel</p>
+    <p class="modal-label" id="modalLabel">PUB Someday — Showreel</p>
     <video id="modalVideo" controls playsinline preload="none">
       <source src="someday_showreel_v2.mp4" type="video/mp4">
     </video>
@@ -573,8 +574,7 @@
     contact_eyebrow: { fr:'Contact', en:'Contact' },
     contact_title: { fr:'Un projet, une idée, une image à fabriquer.', en:'A project, an idea, an image to make.' },
     contact_studio: { fr:'Studio de production 100% IA', en:'100% AI production studio' },
-    footer_tag: { fr:"L'imperfection analogique est intentionnelle.", en:'The analog imperfection is intentional.' },
-    modal_label: { fr:'PUB Someday — Showreel', en:'PUB Someday — Showreel' }
+    footer_tag: { fr:"L'imperfection analogique est intentionnelle.", en:'The analog imperfection is intentional.' }
   };
 
   var currentLang = 'fr';
@@ -612,13 +612,18 @@
   document.addEventListener('scroll', toggleToTop, { passive:true });
   toggleToTop();
 
-  // ---- Video modal (PUB Someday) ----
+  // ---- Video modal (multi-trigger) ----
   var videoModal = document.getElementById('videoModal');
   var modalVideo = document.getElementById('modalVideo');
-  var pubTrigger = document.getElementById('pubSomedayTrigger');
+  var modalLabel = document.getElementById('modalLabel');
   var modalClose = document.getElementById('modalClose');
+  var videoTriggers = document.querySelectorAll('[data-video-src]');
+  var lastFocused = null;
 
-  function openModal(){
+  function openModal(src, label){
+    lastFocused = document.activeElement;
+    modalLabel.textContent = label || '';
+    modalVideo.querySelector('source').setAttribute('src', src);
     videoModal.classList.add('open');
     document.body.style.overflow = 'hidden';
     modalVideo.load();
@@ -629,9 +634,13 @@
     videoModal.classList.remove('open');
     document.body.style.overflow = '';
     modalVideo.pause();
-    pubTrigger.focus();
+    if(lastFocused){ lastFocused.focus(); }
   }
-  if(pubTrigger){ pubTrigger.addEventListener('click', openModal); }
+  videoTriggers.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      openModal(btn.getAttribute('data-video-src'), btn.getAttribute('data-video-label'));
+    });
+  });
   if(modalClose){ modalClose.addEventListener('click', closeModal); }
   videoModal.addEventListener('click', function(e){
     if(e.target === videoModal){ closeModal(); }
